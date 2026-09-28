@@ -43,8 +43,15 @@ else ifneq ($(findstring MINGW,$(shell uname -s)),)
    system_platform = win
 endif
 
+# PS5 (a homebrew title's libretro core): the console's libraries resolve at
+# load time.
+ifeq ($(platform), ps5)
+   TARGET := $(TARGET_NAME)_libretro.so
+   LDFLAGS += -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,--gc-sections
+   fpic = -fPIC
+
 # Unix
-ifeq ($(platform), unix)
+else ifeq ($(platform), unix)
    TARGET := $(TARGET_NAME)_libretro.so
    LDFLAGS += -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,--gc-sections
    fpic = -fPIC
